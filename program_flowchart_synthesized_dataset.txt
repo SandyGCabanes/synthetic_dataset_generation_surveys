@@ -1,0 +1,66 @@
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                                   Start                                      │
+└──────────────────────────────────────────────────────────────────────────────┘
+                                       ↓
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ 1. Load Data                                                                 │
+│   - Load raw dataset                                                         │
+│   - Load synthetic dataset (or prepare for synthesis)                        │
+└──────────────────────────────────────────────────────────────────────────────┘
+                                       ↓
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ 2. Preprocessing                                                             │
+│   - Identify/define unique ID column                                         │
+│   - Define multi-select columns                                              │
+│   - Create disclosure risk flags (flag1, flag2, flag3, flag4)                │
+│   - Normalize / clean multi-select strings                                   │
+└──────────────────────────────────────────────────────────────────────────────┘
+                                       ↓
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ 3. Custom Predictor Matrix Setup                                             │
+│   - Create predictor matrix                                                  │
+│   - Exclude unique ID and flags as predictors / predicted                    │
+└──────────────────────────────────────────────────────────────────────────────┘
+                                       ↓
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ 4. Define Sensitive Variables & Priority Sequence                            │
+│   - Set visit.sequence to flags for synthesis prioritization                 │
+└──────────────────────────────────────────────────────────────────────────────┘
+                                       ↓
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ 5. Synthetic Data Generation                                                 │
+│   - Use synthpop::syn() with CART method                                     │
+│   - Parameters: minbucket, cp, maxdepth                                      │
+│   - Seed for reproducibility                                                 │
+└──────────────────────────────────────────────────────────────────────────────┘
+                                       ↓
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ 6. Privacy & Utility Assessment                                              │
+│   - multi.disclosure() for privacy risk                                      │
+│   - KS tests or other utility metrics for numeric and categorical variables  │
+└──────────────────────────────────────────────────────────────────────────────┘
+                                       ↓
+       ┌─────────────────────────────┬──────────────────────────────┐
+       ↓                             ↓                              ↓
+┌──────────────────────┐    ┌───────────────────────┐     ┌────────────────────────┐
+│ 7. Parameter Tuning  │    │ 8. Multi-select       │     │ 9. Optional Manual     │
+│    Loop              │    │    Frequency Analysis │     │    Post-processing     │
+│ - Loop synthpop with │    │ - Explode multi-select│     │ - Add missing responses│
+│   varied params      │    │   cols (raw & synth)  │     │   or fix frequencies   │
+│ - Run privacy + util │    │ - Compare frequencies │     │ - Rerun validation     │
+│ - Score and keep best│    │ - Generate Plotly     │     │   if needed            │
+│ - Output text file   │    │   dashboards          │     │                        │
+└──────────────────────┘    └───────────────────────┘     └────────────────────────┘
+       ↓                             ↓                             ↓
+       └─────────────┬───────────────┴─────────────┬───────────────┘
+                     ↓                             ↓
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ 10. Final Multi-select Dashboard Generation                                  │
+│     - Compile plots into a single .Rmd/.qmd HTML dashboard                   │
+│     - Review and share interactive report                                    │
+└──────────────────────────────────────────────────────────────────────────────┘
+                                       ↓
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                                    End                                       │
+└──────────────────────────────────────────────────────────────────────────────┘
+
