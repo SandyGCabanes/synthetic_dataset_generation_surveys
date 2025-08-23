@@ -21,16 +21,12 @@ raw_data <- read.csv("dataset.csv", stringsAsFactors = FALSE)
 # -------------------------------
 # Adjust column names according to your data schema
 raw_data <- raw_data %>%
-  mutate(flag1 = !duplicated(paste0(id, country)),
-         flag2 = !duplicated(paste0(id, city)),
-         flag3 = !duplicated(paste0(id, province)),
-         flag4 = !duplicated(paste0(id, age_grp))) %>%
-  mutate(across(starts_with("flag"), as.integer))
+  mutate(combined_flag = paste(country, city, gender, age, sep = "_"))
 
 # -------------------------------
 # Sensitive Variables & Priority Sequence
 # -------------------------------
-priority_vars <- c("flag1", "flag2", "flag3", "flag4")
+priority_vars <- c("combined_flag")
 
 # -------------------------------
 # Custom Predictor Matrix Setup
