@@ -1,0 +1,71 @@
+Unicode flowchart illustrating how the helper functions feed into other functions and the main workflow  code:
+
+┌───────────────────────────────┐
+│       Helper Functions        │
+│-------------------------------│
+│ normalize_text()              │
+│ split_multi()                 │
+│ explode_multiselect()         │
+│ calculate_disclosure()        │
+│ calculate_utility_diff()      │
+│ get_freq_table()              │
+│ compare_freqs()               │
+│ generate_plotly_bar_chart()   │
+└─────────────┬─────────────────┘
+              │
+              │
+              ▼
+┌──────────────────────────────────────────────┐
+│          Multi-select Frequency Analysis     │
+│  - explode_multiselect() transforms raw &    │
+│    synthetic multi-select columns into long  │
+│    format                                    │
+│  - get_freq_table() aggregates counts per    │
+│    category                                  │
+│  - compare_freqs() joins raw and synthetic   │
+│    frequencies                               │
+│  - generate_plotly_bar_chart() creates       │
+│    interactive visualizations                │
+└─────────────┬────────────────────────────────┘
+              │
+              │
+              ▼
+┌────────────────────────────────────────────────┐
+│         Privacy & Utility Assessment           │
+│  - calculate_disclosure() runs multi.disclosure│
+│    to get replicated uniques (repU)            │
+│  - calculate_utility_diff() computes average   │
+│    KS statistics comparing numeric vars        │
+└─────────────┬──────────────────────────────────┘
+              │
+              │
+              ▼
+┌──────────────────────────────────────────────────────────┐
+│               Parameter Tuning Loop                      │
+│  - Calls synthpop::syn() with parameter sets             │
+│  - Uses calculate_disclosure() & calculate_utility_diff()│
+│    to score each synthetic dataset                       │
+│  - Stores tuning results and selects best params         │
+└─────────────┬────────────────────────────────────────────┘
+              │
+              │
+              ▼
+┌──────────────────────────────────────────────┐
+│           Final Steps & Reporting            │
+│  - Uses best synthetic data (best_syn$syn)   │
+│  - Runs DataExplorer reports                 │
+│  - Uses multi-select helper functions for    │
+│    frequency comparisons and dashboard       │
+│    generation                                │
+└──────────────────────────────────────────────┘
+
+
+### Summary:
+
+- **normalize_text()** and **split_multi()** are basic utilities used inside **explode_multiselect()** to transform multi-select string columns into exploded long format.
+- **explode_multiselect()** feeds into **get_freq_table()** and **compare_freqs()** for frequency calculation.
+- **compare_freqs()** outputs feed into **generate_plotly_bar_chart()** for dashboards.
+- **calculate_disclosure()** and **calculate_utility_diff()** are privacy and utility assessors called inside the **parameter tuning loop** to evaluate each synthetic dataset.
+- The **parameter tuning loop** generates synthetic datasets and uses assessment functions to find the best parameter combination.
+- Final outputs include reports from DataExplorer and interactive multi-select dashboards produced via the helper functions.
+
