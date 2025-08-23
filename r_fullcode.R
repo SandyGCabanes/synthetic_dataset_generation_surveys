@@ -31,7 +31,11 @@ priority_vars <- c("combined_flag")
 # -------------------------------
 # Custom Predictor Matrix Setup
 # -------------------------------
-pred_matrix <- make.predictorMatrix(raw_data)
+# Run syn() once without synthesis to get initial setup objects
+sds <- syn(raw_data, m = 0, maxfaclevels = 700)  # m=0 means no synthetic data generated, just setup.
+
+# Extract predictor matrix and modify as needed
+pred_matrix <- sds$predictor.matrix
 
 # Exclude the unique respondent identifier and flags from predictors and predicted
 pred_matrix["id", ] <- 0
@@ -40,6 +44,20 @@ for (flag in priority_vars) {
   pred_matrix[flag, ] <- 0
   pred_matrix[, flag] <- 0
 }
+
+# Define the priority sequence for synthesis
+priority_sequence <- c("city", "country", "gender", "age")
+
+# Ensure these variables exist in raw_data
+priority_sequence <- priority_sequence[priority_sequence %in% colnames(raw_data)]
+
+# Use modified predictor matrix in a full synthesize run
+syn_obj <- syn(raw_data, 
+               predictor.matrix = pred_matrix, 
+               visit.sequence = priority_sequence,
+               maxfaclevels = 700)
+pred_matrix <- syn_obj$predictor.matrix  # Extract predictor matrix from initial syn
+
 
 # -------------------------------
 # Functions for Disclosure Risk and Utility Assessment
