@@ -1,3 +1,4 @@
+setwd("C:/Users/sandy/Google_workspace/_google_sheets_survey/dep_annual_survey_2024/synthesized_data_using_r/github")
 
 # -------------------------------
 # Library Section
@@ -10,11 +11,13 @@ library(plotly)        # For interactive charts
 library(htmlwidgets)   # For saving Plotly charts as HTML
 library(DataExplorer)  # For profiling reports
 
+
 # -------------------------------
 # Load Raw Dataset
 # -------------------------------
 # Replace "dataset.csv" with your actual data file path or use your loaded df
-raw_data <- read.csv("dataset.csv", stringsAsFactors = FALSE)
+raw_data <- read.csv("dataset_sub.csv", stringsAsFactors = FALSE)
+raw_data <- select(raw_data, -bestproject, -Timestamp)
 
 # -------------------------------
 # Flags Creation for Disclosure Risk
@@ -23,10 +26,12 @@ raw_data <- read.csv("dataset.csv", stringsAsFactors = FALSE)
 raw_data <- raw_data %>%
   mutate(combined_flag = paste(country, city, gender, age, sep = "_"))
 
+
 # -------------------------------
 # Sensitive Variables & Priority Sequence
 # -------------------------------
 priority_vars <- c("combined_flag")
+
 
 # -------------------------------
 # Custom Predictor Matrix Setup
