@@ -39,8 +39,17 @@ priority_vars <- c("combined_flag")
 # Run syn() once without synthesis to get initial setup objects
 sds <- syn(raw_data, m = 0, maxfaclevels = 700)  # m=0 means no synthetic data generated, just setup.
 
-# Extract predictor matrix and modify as needed
+# Extract and reset predictor matrix
 pred_matrix <- sds$predictor.matrix
+pred_matrix[,] <- 0
+
+# Keep only 'age', 'gender', 'datarole' as predictors for all variables
+allowed_predictors <- c("age", "gender", "datarole")
+
+# Set allowed predictors to 1 for all target variables
+for (var in rownames(pred_matrix)) {
+  pred_matrix[var, allowed_predictors] <- 1
+}
 
 # Exclude the unique respondent identifier and flags from predictors and predicted
 pred_matrix["id", ] <- 0
@@ -56,13 +65,22 @@ priority_sequence <- c("city", "country", "gender", "age")
 # Ensure these variables exist in raw_data
 priority_sequence <- priority_sequence[priority_sequence %in% colnames(raw_data)]
 
-# Use modified predictor matrix in a full synthesize run
-syn_obj <- syn(raw_data, 
-               predictor.matrix = pred_matrix, 
-               visit.sequence = priority_sequence,
-               maxfaclevels = 700)
-pred_matrix <- syn_obj$predictor.matrix  # Extract predictor matrix from initial syn
+# -------------------------------
+# Synthesis with Timing and Logging
+# -------------------------------
+cat("Starting synthesis...\n")
+synthesis_time <- system.time({
+  syn_obj <- syn(raw_data, 
+                 predictor.matrix = pred_matrix, 
+                 visit.sequence = priority_sequence,
+                 maxfaclevels = 700,
+                 print.flag = TRUE)
+})
+cat("Synthesis complete.\n")
+print(synthesis_time)
 
+# Extract final predictor matrix
+pred_matrix <- syn_obj$
 
 # -------------------------------
 # Functions for Disclosure Risk and Utility Assessment
